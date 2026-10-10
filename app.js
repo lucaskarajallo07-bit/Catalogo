@@ -180,6 +180,7 @@
     if (bump) { cb.classList.remove('bump'); void cb.offsetWidth; cb.classList.add('bump'); }
     var fc = document.getElementById('fav-count');
     fc.textContent = favs.length; fc.hidden = !favs.length;
+    if (DATA) renderCompareBar();
   }
 
   /* ---------- tarjeta ---------- */
@@ -345,7 +346,7 @@
       (CFG.tiktok ? '<a href="' + tkLink() + '" target="_blank" rel="noopener">TikTok @' + esc(CFG.tiktok) + '</a>' : '');
     document.getElementById('footer').innerHTML = '<div class="wrap footer-grid">' +
       '<div class="footer-col"><span class="logo-name">La Plaza</span><span style="color:rgba(255,255,255,.7);line-height:1.6">Perfumes originales, botellas y decants. ' + esc(CFG.retiro) + ', Paraguay.</span></div>' +
-      '<nav class="footer-col" aria-label="Tienda"><span class="eyebrow">Tienda</span><a href="#/catalogo">Catálogo</a><a href="#/catalogo?genero=Masculino">Masculinos</a><a href="#/catalogo?genero=Femenino">Femeninos</a><a href="#/catalogo?genero=Unisex">Unisex</a><a href="#/decants">Decants</a><a href="#/test">Test olfativo</a></nav>' +
+      '<nav class="footer-col" aria-label="Tienda"><span class="eyebrow">Tienda</span><a href="#/catalogo">Catálogo</a><a href="#/catalogo?genero=Masculino">Masculinos</a><a href="#/catalogo?genero=Femenino">Femeninos</a><a href="#/catalogo?genero=Unisex">Unisex</a><a href="#/decants">Decants</a><a href="#/test">Test olfativo</a><a href="#/comparar">Comparar perfumes</a></nav>' +
       '<nav class="footer-col" aria-label="Ayuda"><span class="eyebrow">Compras</span><a href="#/ayuda?s=envios">Envíos y retiro</a><a href="#/ayuda?s=pagos">Pagos</a><a href="#/ayuda?s=cambios">Cambios y devoluciones</a><a href="#/ayuda?s=terminos">Términos de compra</a><a href="#/ayuda?s=privacidad">Privacidad</a></nav>' +
       '<div class="footer-col"><span class="eyebrow">Contacto</span><a href="' + waLink('Hola! Tengo una consulta.') + '" target="_blank" rel="noopener">WhatsApp +' + esc(CFG.whatsapp) + '</a>' + social + '</div>' +
       '</div><div class="wrap footer-bottom"><span>© ' + new Date().getFullYear() + ' La Plaza Perfumería</span><span>Precios en guaraníes (PYG)</span></div>';
@@ -354,13 +355,16 @@
   }
   function renderCompareBar() {
     var bar = document.getElementById('compare-bar');
-    var onPage = location.hash.indexOf('#/comparar') === 0;
-    if (!compare.length || onPage) { bar.hidden = true; document.body.classList.remove('has-compare'); }
+    var onCart = location.hash.indexOf('#/carrito') === 0;
+    var n = units();
+    if (!cart.length || onCart) { bar.hidden = true; document.body.classList.remove('has-compare'); }
     else {
-      bar.innerHTML = '<span class="thumbs-mini" aria-hidden="true">' + compare.map(function (id) { return '<span>' + img(BY_ID[id]) + '</span>'; }).join('') + '</span>' +
-        '<span class="txt">' + plural(compare.length, 'perfume', 'perfumes') + ' para comparar</span>' +
-        '<a class="btn" href="#/comparar">Comparar</a>' +
-        '<button type="button" class="x" data-action="cmp-clear" aria-label="Vaciar comparador">' + I.x + '</button>';
+      var ids = uniq(cart.map(function (i) { return i.id; })).slice(0, 3);
+      bar.innerHTML = '<button type="button" class="bar-open" data-action="open-cart" aria-label="Ver carrito">' +
+          '<span class="thumbs-mini" aria-hidden="true">' + ids.map(function (id) { return '<span>' + img(BY_ID[id]) + '</span>'; }).join('') + '</span>' +
+          '<span class="txt">' + plural(n, 'perfume', 'perfumes') + ' para comprar<small>' + gs(subtotal()) + '</small></span></button>' +
+        (compare.length > 1 && location.hash.indexOf('#/comparar') !== 0 ? '<a class="cmp-link" href="#/comparar">Comparar (' + compare.length + ')</a>' : '') +
+        '<a class="btn" href="#/carrito">Comprar</a>';
       bar.hidden = false; document.body.classList.add('has-compare');
     }
     document.querySelectorAll('[data-action="cmp"]').forEach(function (b) {

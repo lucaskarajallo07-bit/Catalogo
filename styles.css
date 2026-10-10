@@ -379,11 +379,16 @@ svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-widt
 .profile p { margin: 0; color: var(--ink-2); line-height: 1.6; max-width: 620px; }
 
 /* ---------- comparador ---------- */
-.compare-bar { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; width: min(560px, calc(100% - 32px)); background: var(--ink); color: #fff; border-radius: 999px; padding: 8px 8px 8px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 14px 40px rgba(28, 26, 29, .35); animation: rise .25s ease both; }
+.compare-bar { position: fixed; left: 16px; right: 16px; margin: 0 auto; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 60; max-width: 560px; background: var(--ink); color: #fff; border-radius: 999px; padding: 8px 8px 8px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 14px 40px rgba(28, 26, 29, .35); animation: rise .25s ease both; }
 .compare-bar .thumbs-mini { display: flex; gap: 4px; }
 .compare-bar .thumbs-mini span { width: 30px; height: 40px; border-radius: 6px; overflow: hidden; background: var(--photo); }
 .compare-bar .thumbs-mini img { width: 100%; height: 100%; object-fit: cover; }
-.compare-bar .txt { flex: 1; font-size: 14px; font-weight: 700; }
+.compare-bar { padding: 8px; }
+.compare-bar .bar-open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; border: 0; background: transparent; color: #fff; cursor: pointer; text-align: left; padding: 0 0 0 6px; }
+.compare-bar .txt { flex: 1; min-width: 0; font-size: 14px; font-weight: 700; line-height: 1.25; display: flex; flex-direction: column; }
+.compare-bar .txt small { font-size: 12.5px; font-weight: 600; color: var(--gold); }
+.compare-bar .cmp-link { color: rgba(255, 255, 255, .8); font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+body.has-compare { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
 .compare-bar .btn { min-height: 42px; background: #fff; color: var(--ink); border-color: #fff; font-size: 14px; padding: 0 16px; }
 .compare-bar .x { width: 36px; height: 36px; border: 0; border-radius: 999px; background: transparent; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .compare-bar .x svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
@@ -408,7 +413,7 @@ svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-widt
 .wa-float:hover { color: #fff; transform: scale(1.06); }
 .wa-float svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 body.has-compare .wa-float { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
-.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 130; background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; box-shadow: 0 12px 30px rgba(28, 26, 29, .3); animation: rise .25s ease both; max-width: calc(100% - 32px); text-align: center; }
+.toast { position: fixed; left: 16px; right: 16px; margin: 0 auto; width: fit-content; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 130; background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; box-shadow: 0 12px 30px rgba(28, 26, 29, .3); animation: rise .25s ease both; max-width: calc(100% - 32px); text-align: center; }
 .help h2 { font-size: 24px; margin-bottom: 8px; }
 .help section { padding: 22px 0; border-bottom: 1px solid var(--line); }
 .help p { margin: 0; color: #3B363E; line-height: 1.7; }

@@ -1,0 +1,829 @@
+{
+ "config": {
+  "whatsapp": "595984594784",
+  "instagram": "laplaza_perfumeria",
+  "tiktok": "",
+  "retiro": "María Auxiliadora",
+  "pagos": [
+   "Efectivo",
+   "Transferencia"
+  ],
+  "premium": null,
+  "url": "",
+  "banner": "",
+  "zonas": [
+   {
+    "zona": "Asunción",
+    "costo": 30000,
+    "consultar": false,
+    "tiempo": "2 días hábiles"
+   },
+   {
+    "zona": "Encarnación",
+    "costo": 0,
+    "consultar": false,
+    "tiempo": "En el día"
+   },
+   {
+    "zona": "María Auxiliadora",
+    "costo": 20000,
+    "consultar": false,
+    "tiempo": "2 días hábiles"
+   },
+   {
+    "zona": "Otras ciudades",
+    "costo": null,
+    "consultar": true,
+    "tiempo": ""
+   }
+  ]
+ },
+ "productos": [
+  {
+   "id": "afnan-9pm",
+   "orden": 0,
+   "marca": "Afnan",
+   "nombre": "9PM",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Oriental",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Manzana, Canela, Lavanda, Bergamota",
+    "corazon": "Flor de azahar, Lirios",
+    "fondo": "Vainilla, Haba tonka, Ámbar"
+   },
+   "descripcion": "Aroma juvenil, ideal para la noche y fiestas.",
+   "fotos": [
+    "afnan-9pm.jpg"
+   ],
+   "destacado": true,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Noche",
+   "clima": "",
+   "ocasion": [
+    "Salidas",
+    "Fiestas y eventos"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 215000,
+    "ml": 100,
+    "stock": 3
+   },
+   "decants": [
+    {
+     "ml": 5,
+     "precio": 25000,
+     "disponible": true
+    },
+    {
+     "ml": 10,
+     "precio": 35000,
+     "disponible": true
+    }
+   ],
+   "mlDecant": 40
+  },
+  {
+   "id": "afnan-9pm-rebel",
+   "orden": 1,
+   "marca": "Afnan",
+   "nombre": "9PM Rebel",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Especiado",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Piña, Manzana, Mandarina",
+    "corazon": "Cedro, Vainilla",
+    "fondo": "Madera, Ámbar, Caramelo"
+   },
+   "descripcion": "Más juvenil y especiado que el original.",
+   "fotos": [
+    "afnan-9pm-rebel.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "",
+   "clima": "",
+   "ocasion": [],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 320000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [
+    {
+     "ml": 5,
+     "precio": 30000,
+     "disponible": true
+    },
+    {
+     "ml": 10,
+     "precio": 50000,
+     "disponible": true
+    }
+   ],
+   "mlDecant": 100
+  },
+  {
+   "id": "afnan-turathi-blue",
+   "orden": 2,
+   "marca": "Afnan",
+   "nombre": "Turathi Blue",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Fresco",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Cítricos",
+    "corazon": "Notas amaderadas, Ámbar",
+    "fondo": "Almizcle, Especias"
+   },
+   "descripcion": "Un perfil fresco, cítrico y elegante a un precio accesible.",
+   "fotos": [
+    "afnan-turathi-blue.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "",
+   "clima": "",
+   "ocasion": [],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 250000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [
+    {
+     "ml": 5,
+     "precio": 25000,
+     "disponible": true
+    },
+    {
+     "ml": 10,
+     "precio": 45000,
+     "disponible": true
+    }
+   ],
+   "mlDecant": 100
+  },
+  {
+   "id": "afnan-turathi-electric",
+   "orden": 3,
+   "marca": "Afnan",
+   "nombre": "Turathi Electric",
+   "genero": "Unisex",
+   "tipo": "Árabe",
+   "familia": "Fresco",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Pera, Toronja, Mandarina",
+    "corazon": "Manzana, Cedro",
+    "fondo": "Almizcle, Especias"
+   },
+   "descripcion": "Un perfil juvenil, fresco y afrutado.",
+   "fotos": [
+    "afnan-turathi-electric.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "",
+   "clima": "",
+   "ocasion": [],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 250000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [
+    {
+     "ml": 5,
+     "precio": 25000,
+     "disponible": true
+    },
+    {
+     "ml": 10,
+     "precio": 45000,
+     "disponible": true
+    }
+   ],
+   "mlDecant": 100
+  },
+  {
+   "id": "armaf-odyssey-mandarin-sky",
+   "orden": 4,
+   "marca": "Armaf",
+   "nombre": "Odyssey Mandarin Sky",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Frutal",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Mandarina, Naranja, Azafrán",
+    "corazon": "Caramelo, Haba tonka",
+    "fondo": "Cedro, Vetiver"
+   },
+   "descripcion": "Ideal para la noche, fiestas, climas frescos o de invierno.",
+   "fotos": [
+    "armaf-odyssey-mandarin-sky.jpg"
+   ],
+   "destacado": true,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Noche",
+   "clima": "Frío",
+   "ocasion": [
+    "Salidas",
+    "Fiestas y eventos"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 205000,
+    "ml": 100,
+    "stock": 3
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "armaf-odyssey-aqua",
+   "orden": 5,
+   "marca": "Armaf",
+   "nombre": "Odyssey Aqua",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Fresco",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Naranja, Toronja, Pomelo",
+    "corazon": "Menta, Lavanda",
+    "fondo": "Ciprés, Pachulí"
+   },
+   "descripcion": "Ideal para los días calurosos por su frescura intensa.",
+   "fotos": [
+    "armaf-odyssey-aqua.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Día",
+   "clima": "Calor",
+   "ocasion": [],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 230000,
+    "ml": 100,
+    "stock": 2
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "armaf-club-de-nuit-intense-man",
+   "orden": 6,
+   "marca": "Armaf",
+   "nombre": "Club de Nuit Intense Man",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Amaderado",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Limón, Piña, Grosellas negras",
+    "corazon": "Abedul, Jazmín, Rosa",
+    "fondo": "Almizcle, Vainilla, Ámbar gris"
+   },
+   "descripcion": "Funciona excelente para uso diario, oficina, salidas nocturnas y prácticamente cualquier estación del año.",
+   "fotos": [
+    "armaf-club-de-nuit-intense-man.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Día y noche",
+   "clima": "Todo el año",
+   "ocasion": [
+    "Uso diario",
+    "Oficina o facultad",
+    "Salidas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 250000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "rayhaan-elixir",
+   "orden": 7,
+   "marca": "Rayhaan",
+   "nombre": "Elixir",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Amaderado",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Menta, Bergamota",
+    "corazon": "Lavanda, Benjuí",
+    "fondo": "Vainilla, Haba tonka"
+   },
+   "descripcion": "Destaca al máximo en climas fríos (otoño e invierno), salidas nocturnas, citas o situaciones informales de noche.",
+   "fotos": [
+    "rayhaan-elixir.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Noche",
+   "clima": "Frío",
+   "ocasion": [
+    "Salidas",
+    "Citas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 250000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "rasasi-hawas-ice",
+   "orden": 8,
+   "marca": "Rasasi",
+   "nombre": "Hawas Ice",
+   "genero": "Unisex",
+   "tipo": "Árabe",
+   "familia": "Fresco",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Manzana, Limón, Bergamota",
+    "corazon": "Ciruela, Flor de azahar, Cardamomo",
+    "fondo": "Almizcle, Ámbar, Musgo"
+   },
+   "descripcion": "Ideal para uso diario, salidas informales, gimnasio o noches de verano y primavera.",
+   "fotos": [
+    "rasasi-hawas-ice.jpg"
+   ],
+   "destacado": true,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Día y noche",
+   "clima": "Calor",
+   "ocasion": [
+    "Uso diario",
+    "Salidas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 280000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "rasasi-hawas-tropical",
+   "orden": 9,
+   "marca": "Rasasi",
+   "nombre": "Hawas Tropical",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Fresco",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Agua de coco, Jengibre",
+    "corazon": "Coco, Higo, Menta",
+    "fondo": "Sándalo, Haba tonka"
+   },
+   "descripcion": "Diseñado especialmente para climas cálidos y templados. Es una opción perfecta para el uso diario, salidas informales.",
+   "fotos": [
+    "rasasi-hawas-tropical.jpg"
+   ],
+   "destacado": true,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Día",
+   "clima": "Calor",
+   "ocasion": [
+    "Uso diario",
+    "Salidas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 250000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [
+    {
+     "ml": 5,
+     "precio": 25000,
+     "disponible": true
+    },
+    {
+     "ml": 10,
+     "precio": 40000,
+     "disponible": true
+    }
+   ],
+   "mlDecant": 100
+  },
+  {
+   "id": "rasasi-hawas-kobra",
+   "orden": 10,
+   "marca": "Rasasi",
+   "nombre": "Hawas Kobra",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Amaderado",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Jengibre, Bergamota, Naranja",
+    "corazon": "Té verde, Neroli, Canela",
+    "fondo": "Notas amaderadas, Almizcle"
+   },
+   "descripcion": "Es una fragancia sumamente versátil que aporta una sensación de pulcritud impecable.",
+   "fotos": [
+    "rasasi-hawas-kobra.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "",
+   "clima": "",
+   "ocasion": [],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 250000,
+    "ml": 100,
+    "stock": null
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "jean-paul-gaultier-le-male-le-parfum",
+   "orden": 11,
+   "marca": "Jean Paul Gaultier",
+   "nombre": "Le Male Le Parfum",
+   "genero": "Masculino",
+   "tipo": "Diseñador",
+   "familia": "Oriental",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Cardamomo",
+    "corazon": "Lavanda, Iris",
+    "fondo": "Vainilla, Notas orientales"
+   },
+   "descripcion": "Diseñado exclusivamente para climas fríos (otoño e invierno), salidas nocturnas, fiestas elegantes o citas románticas.",
+   "fotos": [
+    "jean-paul-gaultier-le-male-le-parfum.jpg"
+   ],
+   "destacado": true,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Noche",
+   "clima": "Frío",
+   "ocasion": [
+    "Salidas",
+    "Fiestas y eventos",
+    "Citas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 600000,
+    "ml": 125,
+    "stock": null
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "rasasi-hawas-malibu",
+   "orden": 12,
+   "marca": "Rasasi",
+   "nombre": "Hawas Malibu",
+   "genero": "Unisex",
+   "tipo": "Árabe",
+   "familia": "Especiado",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Piña, Naranja, Toronja",
+    "corazon": "Ámbar, Raíz de lirio, Lavanda",
+    "fondo": "Haba tonka, Almizcle, Pachulí"
+   },
+   "descripcion": "Es el perfume definitivo para el verano, días soleados, vacaciones o salidas informales.",
+   "fotos": [
+    "rasasi-hawas-malibu.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Día",
+   "clima": "Calor",
+   "ocasion": [
+    "Salidas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 255000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "lattafa-qaed-al-fursan",
+   "orden": 13,
+   "marca": "Lattafa",
+   "nombre": "Qaed Al Fursan",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Amaderado",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Piña, Azafrán",
+    "corazon": "Abeto, Jazmín",
+    "fondo": "Cedro, Ámbar, Oud"
+   },
+   "descripcion": "Es un comodín absoluto. Funciona perfecto tanto de día como de noche, para uso diario, salidas informales o citas.",
+   "fotos": [
+    "lattafa-qaed-al-fursan.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Día y noche",
+   "clima": "",
+   "ocasion": [
+    "Uso diario",
+    "Salidas",
+    "Citas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 130000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [
+    {
+     "ml": 5,
+     "precio": 20000,
+     "disponible": true
+    },
+    {
+     "ml": 10,
+     "precio": 30000,
+     "disponible": true
+    }
+   ],
+   "mlDecant": 30
+  },
+  {
+   "id": "lattafa-khamrah",
+   "orden": 14,
+   "marca": "Lattafa",
+   "nombre": "Khamrah",
+   "genero": "Masculino",
+   "tipo": "Árabe",
+   "familia": "Dulce",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Canela, Nuez moscada",
+    "corazon": "Dátiles, Praliné, Bergamota",
+    "fondo": "Haba tonka, Amberwood"
+   },
+   "descripcion": "Diseñado netamente para climas fríos (otoño, invierno), días lluviosos o eventos nocturnos formales y citas.",
+   "fotos": [
+    "lattafa-khamrah.jpg"
+   ],
+   "destacado": true,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Noche",
+   "clima": "Frío",
+   "ocasion": [
+    "Fiestas y eventos",
+    "Citas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 200000,
+    "ml": 100,
+    "stock": null
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "lattafa-yara",
+   "orden": 15,
+   "marca": "Lattafa",
+   "nombre": "Yara",
+   "genero": "Femenino",
+   "tipo": "Árabe",
+   "familia": "Dulce",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Orquídea, Naranja",
+    "corazon": "Acorde goloso, Frutas tropicales",
+    "fondo": "Vainilla, Almizcle"
+   },
+   "descripcion": "Al no ser empalagoso ni pesado, es un comodín perfecto para usar todos los días, ir a la facultad, la oficina o para citas de día.",
+   "fotos": [
+    "lattafa-yara.jpg"
+   ],
+   "destacado": true,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Día",
+   "clima": "",
+   "ocasion": [
+    "Uso diario",
+    "Oficina o facultad",
+    "Citas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 210000,
+    "ml": 100,
+    "stock": null
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "lattafa-eclaire",
+   "orden": 16,
+   "marca": "Lattafa",
+   "nombre": "Eclaire",
+   "genero": "Femenino",
+   "tipo": "Árabe",
+   "familia": "Floral",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Caramelo, Leche, Azúcar",
+    "corazon": "Miel, Flores blancas",
+    "fondo": "Vainilla, Praliné, Almizcle"
+   },
+   "descripcion": "Brilla al máximo en climas fríos (otoño e invierno), días lluviosos y salidas de noche.",
+   "fotos": [
+    "lattafa-eclaire.jpg"
+   ],
+   "destacado": true,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Noche",
+   "clima": "Frío",
+   "ocasion": [
+    "Salidas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 270000,
+    "ml": 100,
+    "stock": null
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "armaf-odyssey-candee",
+   "orden": 17,
+   "marca": "Armaf",
+   "nombre": "Odyssey Candee",
+   "genero": "Femenino",
+   "tipo": "Árabe",
+   "familia": "Dulce",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Fresa, Frambuesa, Durazno",
+    "corazon": "Caramelo, Jazmín, Mburucuyá",
+    "fondo": "Pachulí, Almizcle"
+   },
+   "descripcion": "Al ser un aroma bastante dulce y juguetón, brilla al máximo en salidas casuales, citas por la tarde, climas frescos de otoño/invierno.",
+   "fotos": [
+    "armaf-odyssey-candee.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Día",
+   "clima": "Frío",
+   "ocasion": [
+    "Salidas",
+    "Citas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 160000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [],
+   "mlDecant": 0
+  },
+  {
+   "id": "armaf-club-de-nuit-woman",
+   "orden": 18,
+   "marca": "Armaf",
+   "nombre": "Club de Nuit Woman",
+   "genero": "Femenino",
+   "tipo": "Árabe",
+   "familia": "Floral",
+   "concentracion": "EDP",
+   "notas": {
+    "salida": "Naranja, Bergamota, Toronja",
+    "corazon": "Rosa, Jazmín, Geranio",
+    "fondo": "Pachulí, Almizcle"
+   },
+   "descripcion": "Brilla al máximo en climas fríos (otoño e invierno), días lluviosos y salidas de noche.",
+   "fotos": [
+    "armaf-club-de-nuit-woman.jpg"
+   ],
+   "destacado": false,
+   "novedad": false,
+   "masVendido": false,
+   "oferta": null,
+   "momento": "Noche",
+   "clima": "Frío",
+   "ocasion": [
+    "Salidas"
+   ],
+   "intensidad": "",
+   "duracion": "",
+   "botella": {
+    "precio": 240000,
+    "ml": 100,
+    "stock": 1
+   },
+   "decants": [
+    {
+     "ml": 5,
+     "precio": 25000,
+     "disponible": true
+    },
+    {
+     "ml": 10,
+     "precio": 40000,
+     "disponible": true
+    }
+   ],
+   "mlDecant": 100
+  }
+ ],
+ "cupones": []
+}

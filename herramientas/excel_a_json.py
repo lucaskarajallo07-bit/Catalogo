@@ -227,7 +227,7 @@ def generar_paginas(data):
     for old in pdir.glob("*.html"):
         old.unlink()
     for p in data["productos"]:
-        titulo = f"{p['marca']} {p['nombre']} — La Plaza Perfumería"
+        titulo = f"{p['marca']} {p['nombre']} | La Plaza Perfumería"
         desc = (p["descripcion"] + " " if p["descripcion"] else "") + f"Desde {gs(precio_desde(p))}. {cfg['retiro']}, Paraguay."
         foto = f"img/{p['fotos'][0]}" if p["fotos"] else ""
         canon = f"{cfg['url']}producto/{p['id']}.html" if cfg["url"] else ""
@@ -259,7 +259,7 @@ def generar_paginas(data):
         desc = f"{nombre} originales en Paraguay: {', '.join(marcas[:6])}. {len(items)} fragancias, retiro en {cfg['retiro']}."
         canon = f"{cfg['url']}categoria/{key}.html" if cfg["url"] else ""
         (cdir / f"{key}.html").write_text(
-            pagina(template, ruta, f"{nombre} — La Plaza Perfumería", desc, "", cfg, None, canon), encoding="utf-8")
+            pagina(template, ruta, f"{nombre} | La Plaza Perfumería", desc, "", cfg, None, canon), encoding="utf-8")
         if canon:
             urls.append(canon)
 

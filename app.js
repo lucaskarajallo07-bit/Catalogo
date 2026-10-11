@@ -1,4 +1,4 @@
-/* La Plaza Perfumería — tienda estática.
+/* La Plaza Perfumería: tienda estática.
    Datos: data/catalogo.json, generado desde el Excel con herramientas/excel_a_json.py. */
 (function () {
   'use strict';
@@ -192,14 +192,15 @@
     if (av.cls === 'ok') btn = '<button type="button" class="btn btn-sm btn-block" data-action="quick" data-id="' + p.id + '" data-mode="' + (mode || '') + '">' + I.bag + 'Agregar</button>';
     else if (av.cls === 'ask') btn = '<a class="btn btn-sm btn-block btn-ghost" href="' + waLink('Hola! ¿Tenés disponible ' + p.marca + ' ' + p.nombre + '?') + '" target="_blank" rel="noopener">Consultar</a>';
     else btn = '<button type="button" class="btn btn-sm btn-block" disabled>Agotado</button>';
+    var t = tags(p);
     return '<article class="card">' +
       '<div class="card-media"><a href="' + href + '" aria-label="' + esc(p.marca + ' ' + p.nombre) + '">' + img(p) + '</a>' +
-        '<div class="tags">' + tags(p) + '</div>' +
         '<div class="card-actions">' +
           '<button type="button" class="round fav" data-action="fav" data-id="' + p.id + '" aria-pressed="' + fav + '" aria-label="' + (fav ? 'Quitar de' : 'Agregar a') + ' favoritos">' + I.heart + '</button>' +
           '<button type="button" class="round cmp" data-action="cmp" data-id="' + p.id + '" aria-pressed="' + cmp + '" aria-label="' + (cmp ? 'Quitar del' : 'Agregar al') + ' comparador">' + I.cmp + '</button>' +
         '</div></div>' +
       '<div class="card-info">' +
+        (t ? '<div class="card-tags">' + t + '</div>' : '') +
         '<span class="card-brand">' + esc(p.marca) + '</span>' +
         '<a class="card-name" href="' + href + '">' + esc(p.nombre) + '</a>' +
         '<span class="muted" style="font-size:13px">' + esc(presLabel(p, mode)) + '</span>' +
@@ -209,32 +210,47 @@
       '</div></article>';
   }
 
-  /* ---------- capas: drawer, sheet, lightbox, toast ---------- */
+  /* ---------- capas: drawer, sheet, lightbox, toast ----------
+     Entran y salen con transiciones (interrumpibles); la salida es más rápida que la entrada. */
   var layer = null, lastFocus = null;
+  function show(el) {
+    el.hidden = false;
+    el.setAttribute('data-state', 'closed');
+    void el.offsetWidth;
+    el.setAttribute('data-state', 'open');
+  }
+  function hide(el, instant) {
+    el.setAttribute('data-state', 'closed');
+    if (instant) { el.hidden = true; return; }
+    setTimeout(function () { if (el.getAttribute('data-state') === 'closed') el.hidden = true; }, 220);
+  }
   function openLayer(id, html) {
     closeLayer(true);
     var el = document.getElementById(id);
-    el.innerHTML = html; el.hidden = false;
-    if (id !== 'lightbox') document.getElementById('overlay').hidden = false;
+    el.innerHTML = html; show(el);
+    if (id !== 'lightbox') show(document.getElementById('overlay'));
     document.body.style.overflow = 'hidden';
     lastFocus = document.activeElement;
     layer = id;
     var f = el.querySelector('[data-autofocus]') || el.querySelector('button, a, input, select');
-    if (f) f.focus();
+    if (f) f.focus({ preventScroll: true });
   }
   function closeLayer(silent) {
     if (!layer) return;
     var el = document.getElementById(layer);
-    el.hidden = true; el.innerHTML = '';
-    document.getElementById('overlay').hidden = true;
-    document.body.style.overflow = '';
     layer = null;
+    hide(el, silent);
+    var ov = document.getElementById('overlay');
+    if (!ov.hidden) hide(ov, silent);
+    if (silent) el.innerHTML = '';
+    else setTimeout(function () { if (el.hidden) el.innerHTML = ''; }, 240);
+    document.body.style.overflow = '';
     if (!silent && lastFocus && document.contains(lastFocus)) lastFocus.focus();
   }
   function toast(msg) {
     var t = document.getElementById('toast');
-    t.textContent = msg; t.hidden = false;
-    clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200);
+    t.textContent = msg; show(t);
+    clearTimeout(toast.t); toast.t = setTimeout(function () { hide(t); }, 3200);
   }
 
   function lineHTML(i, ctx) {
@@ -247,9 +263,9 @@
         '<button type="button" class="rm" data-action="rm" data-id="' + p.id + '" data-v="' + i.v + '" aria-label="Quitar ' + esc(p.nombre) + '">' + I.x + '</button></div>' +
         (opts.length > 1
           ? '<select data-action="swap" data-id="' + p.id + '" data-v="' + i.v + '" aria-label="Presentación de ' + esc(p.nombre) + '" id="sw-' + ctx + '-' + p.id + '-' + i.v + '">' + opts.map(function (o) {
-              return '<option value="' + o.key + '"' + (o.key === i.v ? ' selected' : '') + '>' + o.label + ' — ' + gs(o.price) + '</option>';
+              return '<option value="' + o.key + '"' + (o.key === i.v ? ' selected' : '') + '>' + o.label + ' (' + gs(o.price) + ')' + '</option>';
             }).join('') + '</select>'
-          : '<span class="muted" style="font-size:13px">' + v.label + ' · ' + gs(v.price) + '</span>') +
+          : '<span class="muted" style="font-size:13px">' + v.label + ', ' + gs(v.price) + '</span>') +
         '<div class="line-bottom"><div class="qty sm"><button type="button" data-action="q-dec" data-id="' + p.id + '" data-v="' + i.v + '" aria-label="Restar uno"' + (i.qty <= 1 ? ' disabled' : '') + '>−</button>' +
           '<output aria-live="polite">' + i.qty + '</output>' +
           '<button type="button" data-action="q-inc" data-id="' + p.id + '" data-v="' + i.v + '" aria-label="Sumar uno"' + (i.qty >= max ? ' disabled' : '') + '>+</button></div>' +
@@ -263,7 +279,7 @@
       '<div class="drawer-body">' +
         (added ? '<div class="added" role="status">' + I.check + esc(added) + '</div>' : '') +
         (cart.length ? cart.map(function (i) { return lineHTML(i, 'd'); }).join('')
-          : '<div class="empty" style="margin-top:12px"><h2>Tu carrito está vacío</h2><p>Elegí una fragancia o probá varias en decant.</p><a class="btn btn-sm" href="#/catalogo" data-action="close-nav">Ver perfumes</a></div>') +
+          : '<div class="empty" style="margin-top:12px"><h2>Tu carrito está vacío</h2><p>Elegí una fragancia o probá varias en decant.</p><a class="btn btn-sm" href="#/catalogo" data-action="close-nav">Descubrir perfumes</a></div>') +
       '</div>' +
       (cart.length ? '<div class="drawer-foot"><div class="sum-row sum-total" style="border:0;padding:0"><span>Subtotal</span><span>' + gs(subtotal()) + '</span></div>' +
         '<p class="fine">Envío' + (DATA.cupones.length ? ' y cupones' : '') + ' en el siguiente paso.</p>' +
@@ -345,7 +361,7 @@
     var social = '<a href="' + igLink() + '" target="_blank" rel="noopener">Instagram @' + esc(CFG.instagram) + '</a>' +
       (CFG.tiktok ? '<a href="' + tkLink() + '" target="_blank" rel="noopener">TikTok @' + esc(CFG.tiktok) + '</a>' : '');
     document.getElementById('footer').innerHTML = '<div class="wrap footer-grid">' +
-      '<div class="footer-col"><span class="logo-name">La Plaza</span><span style="color:rgba(255,255,255,.7);line-height:1.6">Perfumes originales, botellas y decants. ' + esc(CFG.retiro) + ', Paraguay.</span></div>' +
+      '<div class="footer-col"><span class="logo-name">La Plaza</span><span class="muted" style="line-height:1.6">Perfumes originales, botellas y decants. ' + esc(CFG.retiro) + ', Paraguay.</span></div>' +
       '<nav class="footer-col" aria-label="Tienda"><span class="eyebrow">Tienda</span><a href="#/catalogo">Catálogo</a><a href="#/catalogo?genero=Masculino">Masculinos</a><a href="#/catalogo?genero=Femenino">Femeninos</a><a href="#/catalogo?genero=Unisex">Unisex</a><a href="#/decants">Decants</a><a href="#/test">Test olfativo</a><a href="#/comparar">Comparar perfumes</a></nav>' +
       '<nav class="footer-col" aria-label="Ayuda"><span class="eyebrow">Compras</span><a href="#/ayuda?s=envios">Envíos y retiro</a><a href="#/ayuda?s=pagos">Pagos</a><a href="#/ayuda?s=cambios">Cambios y devoluciones</a><a href="#/ayuda?s=terminos">Términos de compra</a><a href="#/ayuda?s=privacidad">Privacidad</a></nav>' +
       '<div class="footer-col"><span class="eyebrow">Contacto</span><a href="' + waLink('Hola! Tengo una consulta.') + '" target="_blank" rel="noopener">WhatsApp +' + esc(CFG.whatsapp) + '</a>' + social + '</div>' +
@@ -385,69 +401,179 @@
     el.textContent = JSON.stringify(obj); document.head.appendChild(el);
   }
 
-  /* ---------- inicio ---------- */
+  /* ---------- inicio ----------
+     Portada: escenario negro (las fotos tienen fondo negro y se funden con él), titular cinético,
+     marquesina de marcas, índice tipográfico de familias, medidor de decants y pasos. */
+  var WORDS = ['aroma.', 'estilo.', 'esencia.'];
+  var heroIdx = 0, heroTimer = null, meterMl = null;
+  var stagePick = null;
+  function shuffle(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function famPhotos(f, n) {
+    var list = DATA.productos.filter(function (p) { return p.familia === f && p.fotos.length; });
+    list.sort(function (a, b) { return b.destacado - a.destacado; });
+    return list.slice(0, n);
+  }
+  function decantSizes() {
+    var sizes = uniq([].concat.apply([], DATA.productos.map(function (p) { return p.decants.filter(function (d) { return d.disponible; }).map(function (d) { return String(d.ml); }); })))
+      .map(Number).sort(function (a, b) { return a - b; });
+    return sizes.map(function (ml) {
+      var min = Math.min.apply(null, DATA.productos.map(function (p) { var d = p.decants.filter(function (x) { return x.ml === ml && x.disponible; })[0]; return d ? withOffer(p, d.precio) : Infinity; }));
+      var n = DATA.productos.filter(function (p) { return p.decants.some(function (d) { return d.ml === ml && d.disponible; }); }).length;
+      return { ml: ml, min: min, n: n };
+    });
+  }
   function viewHome() {
     var P = DATA.productos;
-    setMeta('La Plaza Perfumería — Perfumes originales y decants en Paraguay');
+    setMeta('La Plaza Perfumería | Perfumes originales y decants en Paraguay');
     setJsonLd({ '@context': 'https://schema.org', '@type': 'Store', name: 'La Plaza Perfumería', currenciesAccepted: 'PYG',
       address: { '@type': 'PostalAddress', addressLocality: CFG.retiro, addressCountry: 'PY' }, sameAs: [igLink()].concat(CFG.tiktok ? [tkLink()] : []) });
-    var withPhoto = P.filter(function (p) { return p.fotos.length; });
-    var picks = withPhoto.filter(function (p) { return p.destacado; });
-    var trio = (picks.length >= 3 ? picks : withPhoto).slice(0, 3);
-    var decantMin = Math.min.apply(null, P.filter(hasDecant).map(function (p) { return fromPrice(p, 'decants'); }).concat([Infinity]));
-    var families = Object.keys(FAMILIES).map(function (f) { return { f: f, n: P.filter(function (p) { return p.familia === f; }).length }; }).filter(function (x) { return x.n; });
-    function strip(title, sub, list, link) {
+    /* Portada: 3 perfumes al azar entre los que tienen foto y se pueden comprar ya.
+       Se sortean una vez por visita, así al volver a Inicio no cambian bajo tus ojos. */
+    if (!stagePick) {
+      var withPhoto = P.filter(function (p) { return p.fotos.length; });
+      var buyable = withPhoto.filter(function (p) { return avail(p).cls === 'ok'; });
+      stagePick = shuffle(buyable.length >= 3 ? buyable : withPhoto).slice(0, 3).map(function (p) { return p.id; });
+    }
+    var stage = stagePick.map(function (id) { return P.filter(function (p) { return p.id === id; })[0]; }).filter(Boolean);
+    heroIdx = 0;
+    var families = Object.keys(FAMILIES).map(function (f) { return { f: f, n: P.filter(function (p) { return p.familia === f; }).length }; })
+      .filter(function (x) { return x.n; }).sort(function (a, b) { return b.n - a.n; });
+    var brands = sortEs(uniq(P.map(function (p) { return p.marca; })));
+    var sizes = decantSizes();
+    var maxMl = sizes.length ? sizes[sizes.length - 1].ml : 10;
+    meterMl = sizes.length ? sizes[0].ml : null;
+    function strip(title, list, link) {
       if (!list.length) return '';
-      return '<section class="wrap section"><div class="section-head"><div><div class="eyebrow">' + sub + '</div><h2>' + title + '</h2></div>' + (link ? '<a class="see-all" href="' + link + '">Ver todos →</a>' : '') + '</div>' +
+      return '<section class="wrap section"><div class="section-head"><h2>' + title + '</h2>' + (link ? '<a class="see-all" href="' + link + '">Ver todos</a>' : '') + '</div>' +
         '<div class="grid">' + list.slice(0, 8).map(function (p) { return card(p); }).join('') + '</div></section>';
     }
-    var decantPhotos = P.filter(function (p) { return hasDecant(p) && p.fotos.length; }).slice(0, 3);
-    var trust = [
-      { i: I.wa, bg: '#E3F4EA', c: '#1F7A45', t: 'Pedido por WhatsApp', d: 'Armás el carrito y te llega el pedido escrito. Te respondemos con disponibilidad y total.' },
-      { i: I.pin, bg: '#FFF3D6', c: '#8A6A2A', t: 'Retiro sin costo', d: 'En ' + CFG.retiro + ', coordinando día y horario.' },
-      { i: I.truck, bg: '#E3F1FA', c: '#2B5F86', t: 'Envíos por zona', d: CFG.zonas.length ? CFG.zonas.map(function (z) { return z.zona + (z.consultar ? ' (consultar)' : z.costo === 0 ? ' sin costo' : ' ' + gs(z.costo)); }).join(' · ') : 'Costo según zona, coordinado por WhatsApp.' },
-      { i: I.cash, bg: '#EEE8FF', c: '#6B4FD6', t: 'Pagos simples', d: 'Aceptamos ' + CFG.pagos.join(' y ').toLowerCase() + '.' }
-    ];
+    var brandRun = brands.map(function (b) { return '<a href="#/catalogo?marca=' + encodeURIComponent(b) + '">' + esc(b) + '</a><span class="mq-sep" aria-hidden="true">/</span>'; }).join('');
+
     return '' +
-    '<section class="hero" aria-label="Presentación"><div class="wrap hero-in">' +
-      '<div class="hero-text">' +
-        '<span class="eyebrow">Perfumes originales · Decants · Paraguay</span>' +
-        '<h1><span>Tu aroma.</span><span class="l2">Tu estilo.</span><span class="l3">Tu esencia.</span></h1>' +
-        '<p>Árabes y de diseñador, en botella o en decant para probar antes de decidir. Elegí, armá tu carrito y pedí por WhatsApp.</p>' +
-        '<div class="ctas"><a class="btn" href="#/catalogo">Descubrir perfumes</a><a class="btn btn-lilac" href="#/test">Encontrar mi fragancia</a></div>' +
-        '<div class="pills"><span class="pill"><b>' + P.length + '</b> fragancias</span>' + (isFinite(decantMin) ? '<span class="pill">Decants desde <b>' + gs(decantMin) + '</b></span>' : '') + '<span class="pill">Retiro en <b>' + esc(CFG.retiro) + '</b></span></div>' +
+    /* 1. Escenario */
+    '<section class="wrap stage-wrap" aria-label="Presentación"><div class="stage" id="stage">' +
+      '<div class="stage-text">' +
+        '<h1 class="sr-only">Tu aroma. Tu estilo. Tu esencia.</h1>' +
+        '<p class="kinetic" aria-hidden="true"><span class="k-tu">Tu</span><span class="k-words">' + WORDS.map(function (w, i) { return '<span class="k-word' + (i === 0 ? ' on' : '') + '" data-k="' + i + '">' + w + '</span>'; }).join('') + '</span></p>' +
+        '<p class="stage-sub">Perfumes árabes y de diseñador. En botella, o en decant para probar antes de comprar.</p>' +
+        '<div class="ctas"><a class="btn btn-light" href="#/catalogo">Descubrir perfumes</a><a class="btn btn-lilac" href="#/test">Encontrar mi fragancia</a></div>' +
+        (stage.length > 1 ? '<div class="k-tabs" role="tablist" aria-label="Perfumes para descubrir">' + stage.map(function (p, i) {
+          return '<button type="button" role="tab" class="k-tab' + (i === 0 ? ' on' : '') + '" data-action="hero" data-k="' + i + '" aria-selected="' + (i === 0) + '" aria-controls="kp-' + i + '">' + esc(p.nombre) + '</button>';
+        }).join('') + '</div>' : '') +
       '</div>' +
-      (trio.length ? '<div class="collage">' + trio.map(function (p) { return '<a href="#/p/' + p.id + '" aria-label="' + esc(p.marca + ' ' + p.nombre) + '">' + img(p, 0, false) + '</a>'; }).join('') +
-        '<span class="collage-tag">' + esc(trio[Math.min(1, trio.length - 1)].nombre) + ' · desde ' + gs(fromPrice(trio[Math.min(1, trio.length - 1)])) + '</span></div>' : '') +
+      '<div class="stage-prods">' + stage.map(function (p, i) {
+        var pi = priceInfo(p);
+        return '<div class="k-prod' + (i === 0 ? ' on' : '') + '" data-k="' + i + '" id="kp-' + i + '" role="tabpanel">' +
+          '<a class="k-photo" href="#/p/' + p.id + '" aria-label="' + esc(p.marca + ' ' + p.nombre) + '">' + img(p, 0, false) + '</a>' +
+          '<div class="k-cap"><div><span class="k-brand">' + esc(p.marca) + '</span><a class="k-name" href="#/p/' + p.id + '">' + esc(p.nombre) + '</a></div>' +
+          '<div class="k-buy"><span class="k-price">' + (pi.many ? 'desde ' : '') + gs(pi.price) + '</span>' +
+          (avail(p).cls === 'ok' ? '<button type="button" class="btn btn-sm btn-light" data-action="quick" data-id="' + p.id + '">' + I.bag + 'Agregar</button>' : '') + '</div></div></div>';
+      }).join('') + '</div>' +
     '</div></section>' +
 
-    '<section class="wrap section" style="padding-top:8px"><div class="section-head"><div><div class="eyebrow">Recomendados según tu estilo</div><h2>¿Cuál es tu estilo?</h2></div><a class="see-all" href="#/catalogo">Ver todo el catálogo →</a></div>' +
-      '<div class="styles">' + families.map(function (x) {
-        return '<a class="style-card" style="background:' + FAMILIES[x.f].bg + '" href="#/catalogo?familia=' + encodeURIComponent(x.f) + '"><b>' + x.f + '</b><small>' + FAMILIES[x.f].d + '</small><span class="count">' + plural(x.n, 'fragancia', 'fragancias') + ' →</span></a>';
+    /* 2. Marquesina de marcas */
+    (brands.length > 2 ? '<section class="marquee" aria-label="Marcas"><div class="mq-track"><div class="mq-run">' + brandRun + '</div><div class="mq-run" aria-hidden="true">' + brandRun.replace(/<a /g, '<a tabindex="-1" ') + '</div></div></section>' : '') +
+
+    /* 3. Índice de familias */
+    '<section class="wrap section fam-index"><h2 class="fi-title">¿Cuál es tu estilo?</h2>' +
+      '<div class="fi-grid"><ol class="fi-list">' + families.map(function (x, i) {
+        var thumbs = famPhotos(x.f, 3);
+        return '<li><a class="fi-row' + (i === 0 ? ' on' : '') + '" data-fam="' + x.f + '" href="#/catalogo?familia=' + encodeURIComponent(x.f) + '">' +
+          '<span class="fi-name">' + x.f + '</span><span class="fi-desc">' + FAMILIES[x.f].d + '</span>' +
+          '<span class="fi-thumbs" aria-hidden="true">' + thumbs.map(function (p) { return '<span>' + img(p) + '</span>'; }).join('') + '</span>' +
+          '<span class="fi-count">' + plural(x.n, 'perfume', 'perfumes') + '</span></a></li>';
       }).join('') +
-      '<a class="style-card test" href="#/test"><b>¿No sabés?</b><small>Hacé el test de personalidad olfativa y te recomendamos.</small><span class="count">Empezar el test →</span></a></div></section>' +
+      '<li><a class="fi-row fi-test" href="#/test"><span class="fi-name">¿No sabés?</span><span class="fi-desc">Respondé 6 preguntas y te recomendamos.</span><span class="fi-count">Encontrar mi fragancia</span></a></li></ol>' +
+      '<div class="fi-preview" id="fi-preview" aria-hidden="true">' + families.map(function (x, i) {
+        return '<div class="fi-set' + (i === 0 ? ' on' : '') + '" data-fam="' + x.f + '">' + famPhotos(x.f, 3).map(function (p) { return '<span>' + img(p) + '</span>'; }).join('') + '</div>';
+      }).join('') + '</div></div></section>' +
 
-    strip('Más vendidos', 'Lo que más se lleva', P.filter(function (p) { return p.masVendido; }), '#/catalogo?destacar=Más vendidos') +
-    strip('Ofertas', 'Precios especiales', P.filter(function (p) { return p.oferta; }), '#/catalogo?destacar=Ofertas') +
-    strip('Novedades', 'Recién llegados', P.filter(function (p) { return p.novedad; }), '#/catalogo?destacar=Nuevos') +
+    strip('Más vendidos', P.filter(function (p) { return p.masVendido; }), '#/catalogo?destacar=Más vendidos') +
+    strip('Ofertas', P.filter(function (p) { return p.oferta; }), '#/catalogo?destacar=Ofertas') +
+    strip('Novedades', P.filter(function (p) { return p.novedad; }), '#/catalogo?destacar=Nuevos') +
 
-    (P.some(hasDecant) ? '<section class="band"><div class="wrap section decants-in">' +
-      '<div class="decants-text"><span class="eyebrow">Decants</span><h2>Probá antes de <span class="lilac">enamorarte.</span></h2>' +
-        '<p>Un decant es una porción del perfume original en un atomizador chico. Ideal para descubrir aromas nuevos sin comprar la botella entera, y podés llevar varios en un mismo pedido.</p>' +
-        '<div class="sizes">' + uniq([].concat.apply([], P.map(function (p) { return p.decants.filter(function (d) { return d.disponible; }).map(function (d) { return String(d.ml); }); }))).sort(function (a, b) { return a - b; }).map(function (ml) {
-          var min = Math.min.apply(null, P.map(function (p) { var d = p.decants.filter(function (x) { return x.ml == ml && x.disponible; })[0]; return d ? withOffer(p, d.precio) : Infinity; }));
-          return '<div class="size"><b>' + ml + ' ml</b><span>desde ' + gs(min) + '</span></div>';
+    /* 4. Medidor de decants */
+    (sizes.length ? '<section class="band"><div class="wrap section meter-sec">' +
+      '<div class="ms-text"><h2>¿Cuánto rinde un decant?</h2>' +
+        '<p>Un decant es una porción del perfume original en un atomizador. Elegí la medida y mirá para cuánto te alcanza.</p>' +
+        '<div class="ms-sizes" role="radiogroup" aria-label="Medida">' + sizes.map(function (s) {
+          return '<button type="button" role="radio" class="ms-size" data-action="ml" data-ml="' + s.ml + '" aria-checked="' + (s.ml === meterMl) + '">' + s.ml + ' ml</button>';
         }).join('') + '</div>' +
-        '<div class="ctas"><a class="btn" href="#/decants">Ver todos los decants</a></div></div>' +
-      (decantPhotos.length ? '<div class="decants-photos" aria-hidden="true">' + decantPhotos.map(function (p) { return '<a href="#/p/' + p.id + '" tabindex="-1">' + img(p) + '</a>'; }).join('') + '</div>' : '') +
+        '<dl class="ms-stats" id="ms-stats"></dl>' +
+        '<div class="ctas"><a class="btn" href="#/decants" id="ms-cta">Ver decants</a></div>' +
+        '<p class="fine">Cálculo aproximado: una atomización equivale a unos 0,1 ml y contamos 3 atomizaciones por día.</p></div>' +
+      '<div class="ms-visual" aria-hidden="true"><span class="ms-big" id="ms-big"></span>' +
+        '<div class="vial"><span class="vial-cap"></span><span class="vial-neck"></span><span class="vial-glass"><span class="vial-liquid" id="vial-liquid"></span>' +
+        sizes.map(function (s) { return '<span class="vial-tick" style="bottom:' + (s.ml / maxMl * 100) + '%"><i>' + s.ml + ' ml</i></span>'; }).join('') +
+        '</span></div></div>' +
     '</div></section>' : '') +
 
-    '<section class="wrap section"><div class="section-head"><div><div class="eyebrow">Comprá tranquilo</div><h2>Así funciona</h2></div></div><div class="trust">' + trust.map(function (t) {
-      return '<div class="trust-item"><span class="ico" style="background:' + t.bg + ';color:' + t.c + '">' + t.i + '</span><b>' + t.t + '</b><span>' + esc(t.d) + '</span></div>';
-    }).join('') + '</div></section>' +
+    /* 5. Pasos como manifiesto */
+    '<section class="wrap section steps"><h2 class="sr-only">Cómo comprar</h2><div class="steps-row">' +
+      '<div class="step"><span class="verb">Elegí.</span><p>Botella original o decant. Filtrá por familia, ocasión o precio.</p></div>' +
+      '<div class="step"><span class="verb">Armá.</span><p>Sumá al carrito y elegí envío o retiro sin costo en ' + esc(CFG.retiro) + '.</p></div>' +
+      '<div class="step"><span class="verb">Enviá.</span><p>Te llega el pedido escrito por WhatsApp y coordinamos el pago con ' + esc(CFG.pagos.join(' o ').toLowerCase()) + '.</p></div>' +
+      '</div>' +
+      (CFG.zonas.length ? '<ul class="zones" aria-label="Costos de envío">' + CFG.zonas.map(function (z) {
+        return '<li><span>' + esc(z.zona) + '</span><b>' + (z.consultar ? 'consultar' : z.costo === 0 ? 'sin costo' : gs(z.costo)) + '</b></li>';
+      }).join('') + '<li><span>Retiro</span><b>sin costo</b></li></ul>' : '') +
+    '</section>' +
 
-    '<section class="wrap" style="padding-bottom:64px"><div class="social"><div><h2>Seguinos y enterate primero</h2><p>Nuevos ingresos y promos, primero en nuestras redes.</p></div>' +
-      '<div class="ctas"><a class="btn" href="' + igLink() + '" target="_blank" rel="noopener">Instagram</a>' + (CFG.tiktok ? '<a class="btn" href="' + tkLink() + '" target="_blank" rel="noopener">TikTok</a>' : '') + '</div></div></section>';
+    /* 6. Redes */
+    '<section class="wrap section social2"><p>Nuevos ingresos y promos, primero en Instagram</p>' +
+      '<a class="handle" href="' + igLink() + '" target="_blank" rel="noopener">@' + esc(CFG.instagram) + '</a>' +
+      (CFG.tiktok ? '<a class="handle sm" href="' + tkLink() + '" target="_blank" rel="noopener">TikTok @' + esc(CFG.tiktok) + '</a>' : '') +
+    '</section>';
+  }
+  function setHero(i) {
+    var root = document.getElementById('stage');
+    if (!root) return;
+    heroIdx = i;
+    root.querySelectorAll('[data-k]').forEach(function (el) { el.classList.toggle('on', Number(el.getAttribute('data-k')) === i); });
+    root.querySelectorAll('.k-tab').forEach(function (t) { t.setAttribute('aria-selected', Number(t.getAttribute('data-k')) === i); });
+  }
+  function startHero() {
+    clearInterval(heroTimer); heroTimer = null;
+    var root = document.getElementById('stage');
+    if (!root || root.querySelectorAll('.k-prod').length < 2) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    heroTimer = setInterval(function () {
+      if (!document.getElementById('stage')) { clearInterval(heroTimer); return; }
+      // Pausa si la pestaña no está visible, si el mouse está encima o si hay foco adentro.
+      if (document.hidden || root.matches(':hover') || root.contains(document.activeElement)) return;
+      setHero((heroIdx + 1) % root.querySelectorAll('.k-prod').length);
+    }, 3800);
+  }
+  function setMeter(ml) {
+    var sizes = decantSizes();
+    var s = sizes.filter(function (x) { return x.ml === ml; })[0];
+    if (!s) return;
+    meterMl = ml;
+    var maxMl = sizes[sizes.length - 1].ml;
+    var sprays = ml * 10, days = Math.floor(sprays / 3);
+    document.getElementById('ms-big').innerHTML = ml + '<small>ml</small>';
+    document.getElementById('vial-liquid').style.clipPath = 'inset(' + (100 - ml / maxMl * 100) + '% 0 0 0)';
+    document.getElementById('ms-stats').innerHTML =
+      '<div><dt>Rinde</dt><dd>unas ' + sprays + ' atomizaciones</dd></div>' +
+      '<div><dt>Te dura</dt><dd>unos ' + days + ' días</dd></div>' +
+      '<div><dt>Precio</dt><dd>desde ' + gs(s.min) + '</dd></div>' +
+      '<div><dt>Disponible en</dt><dd>' + plural(s.n, 'perfume', 'perfumes') + '</dd></div>';
+    document.getElementById('ms-cta').setAttribute('href', '#/decants?tamano=' + encodeURIComponent(ml + ' ml'));
+    document.querySelectorAll('.ms-size').forEach(function (b) { b.setAttribute('aria-checked', Number(b.getAttribute('data-ml')) === ml); });
+  }
+  function setFam(f) {
+    var pv = document.getElementById('fi-preview');
+    if (!pv) return;
+    pv.querySelectorAll('.fi-set').forEach(function (x) { x.classList.toggle('on', x.getAttribute('data-fam') === f); });
+    document.querySelectorAll('.fi-row[data-fam]').forEach(function (x) { x.classList.toggle('on', x.getAttribute('data-fam') === f); });
+  }
+  function afterHome() {
+    startHero();
+    if (meterMl != null) setMeter(meterMl);
   }
 
   /* ---------- catálogo ---------- */
@@ -513,14 +639,14 @@
     cat = parseQuery(qs, mode);
     var dec = mode === 'decants';
     var title = cat.fav ? 'Tus favoritos' : dec ? 'Decants' : cat.genero && cat.genero.length === 1 ? 'Perfumes ' + cat.genero[0].toLowerCase() + (cat.genero[0] === 'Unisex' ? '' : 's') : 'Catálogo';
-    setMeta(title + ' — La Plaza Perfumería', dec ? 'Decants de perfumes originales para probar antes de comprar la botella.' : 'Perfumes originales árabes y de diseñador en Paraguay.');
+    setMeta(title + ' | La Plaza Perfumería', dec ? 'Decants de perfumes originales para probar antes de comprar la botella.' : 'Perfumes originales árabes y de diseñador en Paraguay.');
     setJsonLd(null);
     var wide = window.matchMedia('(min-width: 641px)').matches;
-    var sorts = [['rel', 'Relevancia'], ['precio-asc', 'Precio: menor a mayor'], ['precio-desc', 'Precio: mayor a menor'], ['nombre', 'Nombre A–Z']];
+    var sorts = [['rel', 'Relevancia'], ['precio-asc', 'Precio: menor a mayor'], ['precio-desc', 'Precio: mayor a menor'], ['nombre', 'Nombre A-Z']];
     if (DATA.productos.some(function (p) { return p.novedad; })) sorts.splice(1, 0, ['nuevos', 'Novedades']);
     return '<div class="wrap page">' +
       '<nav class="crumbs" aria-label="Ruta"><a href="#/">Inicio</a> / ' + (dec ? 'Decants' : 'Catálogo') + '</nav>' +
-      (dec ? '<div class="decant-hero"><div><h1>Decants</h1><p>Porciones del perfume original en atomizador, para probar con calma. No son botellas selladas. Podés sumar varios al mismo pedido y armar tu propio kit.</p></div><a class="btn btn-lilac" href="#/test">¿Cuál probar? Hacé el test</a></div>'
+      (dec ? '<div class="decant-hero"><div><h1>Decants</h1><p>Porciones del perfume original en atomizador, para probar con calma. No son botellas selladas. Podés sumar varios al mismo pedido y armar tu propio kit.</p></div><a class="btn btn-lilac" href="#/test">Encontrar mi fragancia</a></div>'
         : '<h1 class="page-title">' + esc(title) + '</h1><p class="page-intro">Buscá por nombre, marca o nota: por ejemplo «vainilla», «Lattafa» o «cítricos».</p>') +
       '<div class="toolbar">' +
         '<label class="field-box q"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>' +
@@ -587,7 +713,7 @@
     var first = vs.filter(function (v) { return v.state === 'ok' && v.key !== 'botella'; })[0] || vs.filter(function (v) { return v.state === 'ok'; })[0] || vs.filter(function (v) { return v.state === 'ask'; })[0] || vs[0];
     pdp = { id: id, v: first ? first.key : null, qty: 1, foto: 0 };
     var title = p.marca + ' ' + p.nombre;
-    setMeta(title + ' — La Plaza Perfumería', (p.descripcion ? p.descripcion + ' ' : '') + 'Desde ' + gs(fromPrice(p)) + '.');
+    setMeta(title + ' | La Plaza Perfumería', (p.descripcion ? p.descripcion + ' ' : '') + 'Desde ' + gs(fromPrice(p)) + '.');
     setJsonLd({ '@context': 'https://schema.org', '@type': 'Product', name: p.nombre, brand: { '@type': 'Brand', name: p.marca }, description: p.descripcion,
       image: p.fotos.map(function (f) { return 'img/' + f; }),
       offers: vs.map(function (v) { return { '@type': 'Offer', name: v.label, price: v.price, priceCurrency: 'PYG', availability: 'https://schema.org/' + (v.state === 'ok' ? 'InStock' : v.state === 'out' ? 'OutOfStock' : 'LimitedAvailability') }; }) });
@@ -595,8 +721,8 @@
       .concat(DATA.productos.filter(function (x) { return x.id !== p.id && x.familia !== p.familia && x.genero === p.genero; })).slice(0, 4);
     var n = p.notas;
     var when = [];
-    if (p.momento) p.momento.split(' y ').forEach(function (m) { when.push('<span class="' + (m.toLowerCase() === 'noche' ? 'night' : 'day') + '">' + (m === 'Día' || m === 'día' ? 'De día' : m.toLowerCase() === 'noche' ? 'De noche' : m) + '</span>'); });
-    if (p.clima) when.push('<span class="' + (p.clima === 'Calor' ? 'hot' : p.clima === 'Frío' ? 'cold' : '') + '">' + (p.clima === 'Todo el año' ? 'Todo el año' : 'Clima ' + p.clima.toLowerCase()) + '</span>');
+    if (p.momento) p.momento.split(' y ').forEach(function (m) { when.push('<span>' + (m === 'Día' || m === 'día' ? 'De día' : m.toLowerCase() === 'noche' ? 'De noche' : m) + '</span>'); });
+    if (p.clima) when.push('<span>' + (p.clima === 'Todo el año' ? 'Todo el año' : 'Clima ' + p.clima.toLowerCase()) + '</span>');
     p.ocasion.forEach(function (o) { when.push('<span>' + esc(o) + '</span>'); });
     var meters = [['Intensidad', p.intensidad], ['Duración', p.duracion]].filter(function (m) { return m[1]; });
     return '<div class="wrap page">' +
@@ -606,7 +732,7 @@
         '<div class="pdp-info">' +
           (tags(p) ? '<div class="pdp-tags">' + tags(p).replace(/tag dark/g, 'tag') + '</div>' : '') +
           '<div><div class="pdp-brand">' + esc(p.marca) + '</div><h1>' + esc(p.nombre) + '</h1>' +
-          '<div class="pdp-meta">' + [p.concentracion, p.genero, p.familia ? 'Familia ' + p.familia.toLowerCase() : '', p.tipo].filter(Boolean).map(esc).join(' · ') + '</div></div>' +
+          '<div class="pdp-meta">' + [p.concentracion, p.genero, p.familia ? 'familia ' + p.familia.toLowerCase() : '', p.tipo].filter(Boolean).map(esc).join(', ') + '</div></div>' +
           (p.descripcion ? '<p class="pdp-desc">' + esc(p.descripcion) + '</p>' : '') +
           '<div class="pdp-price" id="pdp-price"></div>' +
           '<div><div class="label" id="pres-l">Presentación</div><div class="variants" role="radiogroup" aria-labelledby="pres-l" id="variants"></div></div>' +
@@ -614,15 +740,15 @@
           '<div class="buy-row" id="buy-row"></div>' +
           '<div class="share-row" id="share-row"></div>' +
           '<div class="blocks">' +
+            ((n.salida || n.corazon || n.fondo) ? '<div class="block block-wide"><div class="label">Pirámide olfativa</div><div class="pyramid">' + [['Salida', n.salida, 'Lo primero que sentís'], ['Corazón', n.corazon, 'A los pocos minutos'], ['Fondo', n.fondo, 'Lo que queda horas después']].filter(function (x) { return x[1]; }).map(function (x, i) { return '<div class="tier t' + i + '"><span class="tier-k"><b>' + x[0] + '</b><small>' + x[2] + '</small></span><span class="tier-v">' + esc(x[1]) + '</span></div>'; }).join('') + '</div></div>' : '') +
             (when.length ? '<div class="block"><div class="label">Cuándo usarlo</div><div class="when">' + when.join('') + '</div></div>' : '') +
-            (meters.length ? '<div class="block"><div class="label">Rendimiento</div>' + meters.map(function (m) { return '<div class="meter"><span>' + m[0] + '</span><span class="bar" role="img" aria-label="' + m[0] + ' ' + m[1] + '"><i style="width:' + (LEVELS[m[1]] / 3 * 100) + '%"></i></span><b>' + esc(m[1]) + '</b></div>'; }).join('') + '<p class="fine">Estimado: depende de tu piel y del clima.</p></div>' : '') +
-            ((n.salida || n.corazon || n.fondo) ? '<div class="block"><div class="label">Notas olfativas</div><div class="notes">' + [['Salida', n.salida], ['Corazón', n.corazon], ['Fondo', n.fondo]].filter(function (x) { return x[1]; }).map(function (x) { return '<div><b>' + x[0] + '</b><span>' + esc(x[1]) + '</span></div>'; }).join('') + '</div></div>' : '') +
+            (meters.length ? '<div class="block"><div class="label">Rendimiento</div>' + meters.map(function (m) { return '<div class="meter"><span>' + m[0] + '</span><b>' + esc(m[1]) + '</b></div>'; }).join('') + '<p class="fine">Estimado: depende de tu piel y del clima.</p></div>' : '') +
             '<div class="block"><div class="label">Entrega y pago</div><div class="info-list"><span>Retiro sin costo en ' + esc(CFG.retiro) + '.</span><span>Envíos: ' + esc(CFG.zonas.length ? CFG.zonas.map(function (z) { return z.zona + (z.consultar ? ' (consultar)' : z.costo === 0 ? ' sin costo' : ' ' + gs(z.costo)); }).join(', ') : 'según zona') + '.</span><span>Pago: ' + esc(CFG.pagos.join(' o ').toLowerCase()) + '.</span>' +
               '<a href="#" id="ask-link" target="_blank" rel="noopener" style="font-weight:700">' + 'Consultar por WhatsApp →</a></div></div>' +
           '</div>' +
         '</div>' +
       '</div>' +
-      (similar.length ? '<section class="section" style="padding-bottom:0"><div class="section-head"><div><div class="eyebrow">Te puede gustar</div><h2>Perfumes similares</h2></div></div><div class="grid">' + similar.map(function (x) { return card(x); }).join('') + '</div></section>' : '') +
+      (similar.length ? '<section class="section" style="padding-bottom:0"><div class="section-head"><h2>Perfumes similares</h2></div><div class="grid">' + similar.map(function (x) { return card(x); }).join('') + '</div></section>' : '') +
     '</div>';
   }
   function renderGallery() {
@@ -700,7 +826,7 @@
     return e;
   }
   function viewCart() {
-    setMeta('Tu pedido — La Plaza Perfumería'); setJsonLd(null);
+    setMeta('Tu pedido | La Plaza Perfumería'); setJsonLd(null);
     if (sent) {
       return '<div class="wrap page"><div class="done"><div class="done-icon">' + I.check + '</div><h1>Tu pedido está listo</h1>' +
         '<p>Tocá el botón para abrir WhatsApp con el pedido ya escrito. Lo enviás desde ahí y te confirmamos disponibilidad y total.</p>' +
@@ -740,7 +866,7 @@
     var del = document.getElementById('delivery');
     if (checkout.mode === 'envio') {
       del.innerHTML = (CFG.zonas.length ? '<label class="' + (e.zona ? 'has-error' : '') + '">Zona de entrega<select id="c-zona" name="zona"><option value="">Elegí tu zona</option>' + CFG.zonas.map(function (z) {
-          return '<option value="' + esc(z.zona) + '"' + (checkout.zona === z.zona ? ' selected' : '') + '>' + esc(z.zona) + ' — ' + (z.consultar ? 'costo a confirmar' : z.costo === 0 ? 'sin costo' : gs(z.costo)) + (z.tiempo ? ' · ' + esc(z.tiempo) : '') + '</option>';
+          return '<option value="' + esc(z.zona) + '"' + (checkout.zona === z.zona ? ' selected' : '') + '>' + esc(z.zona) + ': ' + (z.consultar ? 'costo a confirmar' : z.costo === 0 ? 'sin costo' : gs(z.costo)) + (z.tiempo ? ', ' + esc(z.tiempo).toLowerCase() : '') + '</option>';
         }).join('') + '</select>' + (e.zona ? '<span class="err" role="alert">' + e.zona + '</span>' : '') + '</label>' : '') +
         '<label class="' + (e.addr ? 'has-error' : '') + '">Dirección y referencia<input type="text" id="c-addr" name="addr" autocomplete="street-address" placeholder="Calle, número, barrio, ciudad" value="' + esc(checkout.addr) + '">' + (e.addr ? '<span class="err" role="alert">' + e.addr + '</span>' : '') + '</label>';
     } else del.innerHTML = '<p class="fine" style="font-size:14px">Retiro sin costo en ' + esc(CFG.retiro) + '. Coordinamos día y horario por WhatsApp.</p>';
@@ -762,11 +888,11 @@
   function orderMessage() {
     var t = totals();
     var m = ['Hola La Plaza! Quiero hacer este pedido:', ''];
-    cart.forEach(function (i) { var p = BY_ID[i.id], v = variant(p, i.v); m.push('• ' + p.marca + ' ' + p.nombre + ' — ' + v.label + ' x' + i.qty + ' — ' + gs(v.price * i.qty)); });
+    cart.forEach(function (i) { var p = BY_ID[i.id], v = variant(p, i.v); m.push('• ' + p.marca + ' ' + p.nombre + ', ' + v.label + ' x' + i.qty + ': ' + gs(v.price * i.qty)); });
     m.push('', 'Subtotal: ' + gs(t.sub));
     if (t.disc) m.push('Cupón ' + t.cp.c.codigo + ': −' + gs(t.disc));
     if (checkout.mode === 'retiro') m.push('Entrega: Retiro en ' + CFG.retiro);
-    else { m.push('Entrega: ' + t.sh.label + (t.sh.known ? ' — ' + (t.sh.cost ? gs(t.sh.cost) : 'sin costo') : '')); m.push('Dirección: ' + checkout.addr.trim()); }
+    else { m.push('Entrega: ' + t.sh.label + (t.sh.known ? ': ' + (t.sh.cost ? gs(t.sh.cost) : 'sin costo') : '')); m.push('Dirección: ' + checkout.addr.trim()); }
     m.push('Total: ' + gs(t.total) + (t.sh.known ? '' : ' + envío'));
     if (checkout.pago) m.push('Pago: ' + checkout.pago);
     m.push('', 'Nombre: ' + checkout.name.trim(), 'Teléfono: ' + checkout.phone.trim());
@@ -839,7 +965,7 @@
     return { close: close, list: list, persona: persona };
   }
   function viewQuiz() {
-    setMeta('Test de personalidad olfativa — La Plaza Perfumería', 'Respondé unas preguntas y te recomendamos perfumes de nuestro catálogo según tu estilo y presupuesto.'); setJsonLd(null);
+    setMeta('Test de personalidad olfativa | La Plaza Perfumería', 'Respondé unas preguntas y te recomendamos perfumes de nuestro catálogo según tu estilo y presupuesto.'); setJsonLd(null);
     var qs = quizQuestions();
     if (quiz.step < qs.length) {
       var q = qs[quiz.step];
@@ -857,23 +983,23 @@
     return '<div class="wrap page"><div class="quiz" style="max-width:var(--wrap)">' +
       '<div class="profile"><span class="eyebrow">Tu resultado</span><h1 tabindex="-1" id="quiz-h">' + (r.persona ? 'Tu estilo: ' + r.persona[3].join(' / ').toLowerCase() : (r.close ? 'Opciones cercanas' : 'Te pueden gustar')) + '</h1>' +
         '<p>' + (fam ? FAMILIES[fam].d + ' ' : '') + (r.close ? 'No encontramos una coincidencia exacta con todas tus respuestas; estas son las más cercanas en nuestro catálogo.' : 'Estas fragancias de nuestro catálogo coinciden con tus respuestas. Si dudás, empezá por un decant.') + '</p></div>' +
-      '<div class="grid">' + r.list.map(function (x) { return card(x.p, a_mode(), x.why.length ? '<span class="why">Por qué: ' + esc(x.why.join(' · ')) + '</span>' : ''); }).join('') + '</div>' +
-      '<div class="quiz-nav"><button type="button" class="btn btn-ghost" data-action="q-restart">Repetir el test</button><a class="btn" href="#/catalogo">Ver todo el catálogo</a></div>' +
+      '<div class="grid">' + r.list.map(function (x) { return card(x.p, a_mode(), x.why.length ? '<span class="why">Por qué: ' + esc(x.why.join(', ')) + '</span>' : ''); }).join('') + '</div>' +
+      '<div class="quiz-nav"><button type="button" class="btn btn-ghost" data-action="q-restart">Repetir el test</button><a class="btn" href="#/catalogo">Descubrir perfumes</a></div>' +
     '</div></div>';
   }
   function a_mode() { return quiz.a.budget === 'decant' ? 'decants' : ''; }
 
   /* ---------- comparador ---------- */
   function viewCompare() {
-    setMeta('Comparar perfumes — La Plaza Perfumería'); setJsonLd(null);
+    setMeta('Comparar perfumes | La Plaza Perfumería'); setJsonLd(null);
     var list = compare.map(function (id) { return BY_ID[id]; });
     if (list.length < 2) {
-      return '<div class="wrap page"><h1 class="page-title">Comparar perfumes</h1><div class="empty"><h2>' + (list.length ? 'Sumá otro perfume' : 'Elegí perfumes para comparar') + '</h2><p>Tocá el ícono de comparar en hasta 3 perfumes y vas a ver sus diferencias lado a lado.</p><a class="btn btn-sm" href="#/catalogo">Ir al catálogo</a></div></div>';
+      return '<div class="wrap page"><h1 class="page-title">Comparar perfumes</h1><div class="empty"><h2>' + (list.length ? 'Sumá otro perfume' : 'Elegí perfumes para comparar') + '</h2><p>Tocá el ícono de comparar en hasta 3 perfumes y vas a ver sus diferencias lado a lado.</p><a class="btn btn-sm" href="#/catalogo">Descubrir perfumes</a></div></div>';
     }
     function rowIf(label, fn) {
       var vals = list.map(fn);
       if (!vals.some(function (v) { return v; })) return '';
-      return '<tr><th scope="row">' + label + '</th>' + vals.map(function (v) { return '<td>' + (v || '—') + '</td>'; }).join('') + '</tr>';
+      return '<tr><th scope="row">' + label + '</th>' + vals.map(function (v) { return '<td>' + (v || '-') + '</td>'; }).join('') + '</tr>';
     }
     return '<div class="wrap page"><h1 class="page-title" style="margin-bottom:20px">Comparar perfumes</h1><div class="table-wrap"><table class="cmp-table">' +
       '<tr><th scope="row">Perfume</th>' + list.map(function (p) {
@@ -900,7 +1026,7 @@
 
   /* ---------- ayuda ---------- */
   function viewHelp() {
-    setMeta('Compras y envíos — La Plaza Perfumería'); setJsonLd(null);
+    setMeta('Compras y envíos | La Plaza Perfumería'); setJsonLd(null);
     return '<div class="wrap page help" style="max-width:820px"><h1 class="page-title">Compras y envíos</h1>' +
       '<section id="envios"><h2>Envíos y retiro</h2><p>Retiro sin costo en ' + esc(CFG.retiro) + ', coordinando día y horario por WhatsApp.</p>' +
         (CFG.zonas.length ? '<div class="summary" style="margin-top:14px">' + CFG.zonas.map(function (z) { return '<div class="sum-row"><span>' + esc(z.zona) + (z.tiempo ? ' · ' + esc(z.tiempo) : '') + '</span><span>' + (z.consultar ? 'Consultar' : z.costo === 0 ? 'Sin costo' : gs(z.costo)) + '</span></div>'; }).join('') + '</div>' : '') + '</section>' +
@@ -912,18 +1038,19 @@
       '<div style="margin-top:28px"><a class="btn" href="' + waLink('Hola! Tengo una consulta.') + '" target="_blank" rel="noopener">' + I.wa + 'Escribinos por WhatsApp</a></div></div>';
   }
   function viewNotFound() {
-    setMeta('No encontrado — La Plaza Perfumería');
-    return '<div class="wrap page"><div class="done"><h1>No encontramos esa página</h1><p>Puede que el perfume ya no esté en el catálogo.</p><div class="row"><a class="btn" href="#/catalogo">Ver perfumes</a></div></div></div>';
+    setMeta('No encontrado | La Plaza Perfumería');
+    return '<div class="wrap page"><div class="done"><h1>No encontramos esa página</h1><p>Puede que el perfume ya no esté en el catálogo.</p><div class="row"><a class="btn" href="#/catalogo">Descubrir perfumes</a></div></div></div>';
   }
 
   /* ---------- router ---------- */
   function route() {
     closeLayer(true);
+    clearInterval(heroTimer); heroTimer = null;
     var h = location.hash.replace(/^#/, '') || '/';
     var qi = h.indexOf('?');
     var path = qi === -1 ? h : h.slice(0, qi), qs = qi === -1 ? '' : h.slice(qi + 1);
     var html, after = null;
-    if (path === '/' || path === '') html = viewHome();
+    if (path === '/' || path === '') { html = viewHome(); after = afterHome; }
     else if (path === '/catalogo') { html = viewCatalog(qs, ''); after = function () { renderCatalogParts(); }; }
     else if (path === '/decants') { html = viewCatalog(qs, 'decants'); after = function () { renderCatalogParts(); }; }
     else if (path.indexOf('/p/') === 0) { html = viewProduct(decodeURIComponent(path.slice(3))); if (pdp) after = function () { renderGallery(); renderPdpParts(); }; }
@@ -934,6 +1061,10 @@
     else html = viewNotFound();
     app.innerHTML = '<div class="view">' + html + '</div>';
     if (after) after();
+    // Entrada escalonada solo al llegar a una página (no al filtrar ni ordenar).
+    app.querySelectorAll('.grid').forEach(function (g) {
+      [].forEach.call(g.children, function (c, i) { c.style.setProperty('--i', i); c.classList.add('enter'); });
+    });
     document.querySelectorAll('.nav a').forEach(function (a) {
       if (a.getAttribute('href').replace(/^#/, '') === h) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
@@ -953,6 +1084,8 @@
       return;
     }
     var a = el.getAttribute('data-action'), id = el.getAttribute('data-id'), v = el.getAttribute('data-v');
+    if (a === 'hero') { setHero(Number(el.getAttribute('data-k'))); startHero(); return; }
+    if (a === 'ml') { setMeter(Number(el.getAttribute('data-ml'))); return; }
     if (a === 'close') closeLayer();
     else if (a === 'close-nav') closeLayer(true);
     else if (a === 'fav') {
@@ -1033,6 +1166,14 @@
   }
   function focusQuiz() { var h = document.getElementById('quiz-h'); if (h) h.focus(); }
 
+  document.addEventListener('pointerover', function (ev) {
+    var r = ev.target.closest && ev.target.closest('.fi-row[data-fam]');
+    if (r && window.matchMedia('(hover: hover)').matches) setFam(r.getAttribute('data-fam'));
+  });
+  document.addEventListener('focusin', function (ev) {
+    var r = ev.target.closest && ev.target.closest('.fi-row[data-fam]');
+    if (r) setFam(r.getAttribute('data-fam'));
+  });
   document.addEventListener('change', function (ev) {
     var t = ev.target;
     if (t.matches('[data-filter]')) {
